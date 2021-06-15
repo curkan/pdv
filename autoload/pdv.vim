@@ -321,27 +321,6 @@ func! pdv#ParseAttributeData(line)
 	return l:data
 endfunc
 
-func! pdv#ParseVariableData(line)
-	let l:text = getline(a:line)
-
-	let l:data = {}
-	let l:matches = matchlist(l:text, s:regex["variable"])
-
-	let l:data["indent"] = l:matches[1]
-	let l:data["name"] = l:matches[2]
-	" TODO: Cleanup ; and friends
-	let l:data["default"] = get(l:matches, 3, '')
-
-	let l:types = matchlist(l:matches[3], s:regex["newobject"])
-	if (!empty(l:types))
-		let l:data["type"] = l:types[1]
-    elseif (!empty(l:data["default"]))
-        let l:data["type"] = s:GuessType(l:data["default"])
-	endif
-
-	return l:data
-endfunc
-
 func! pdv#ParseFunctionData(line)
 	let l:text = getline(a:line)
 
