@@ -34,6 +34,10 @@
 let s:old_cpo = &cpo
 set cpo&vim
 
+if !exists('g:pdv_template_dir')
+	let g:pdv_template_dir = expand('<sfile>:p:h:h') . '/templates_snip'
+endif
+
 "
 " Regular expressions 
 " 
@@ -80,11 +84,11 @@ let s:regex["newobject"] = '^\s*new\s*\([^(;]\+\).*$'
 
 let s:regex["types"] = {}
 
-let s:regex["types"]["array"]  = "^array *(.*"
+let s:regex["types"]["array"]  = '^array *(.*\c'
 let s:regex["types"]["float"]  = '^[0-9]*\.[0-9]\+'
 let s:regex["types"]["int"]    = '^[0-9]\+'
 let s:regex["types"]["string"] = "['\"].*"
-let s:regex["types"]["bool"] = "\(true\|false\)"
+let s:regex["types"]["bool"] = '\(true\|false\)\c'
 
 let s:regex["indent"] = '^\s*'
 
@@ -231,6 +235,28 @@ func! pdv#ParseTraitData(line)
 	return l:data
 endfunc
 
+func! pdv#ParseVariableData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["variable"])
+
+	let l:data["indent"] = l:matches[1]
+	let l:data["name"] = l:matches[2]
+	" TODO: Cleanup ; and friends
+	let l:data["default"] = get(l:matches, 3, '')
+
+	let l:types = matchlist(l:matches[3], s:regex["newobject"])
+	if (!empty(l:types))
+		let l:data["type"] = l:types[1]
+	elseif (!empty(l:data["default"]))
+		let l:data["type"] = s:GuessType(l:data["default"])
+	endif
+
+	return l:data
+endfunc
+
+
 func! s:ParseExtendsImplements(data, text)
 	let l:tokens = split(a:text, '\(\s*,\s*\|\s\+\)')
 
@@ -322,11 +348,16 @@ func! pdv#ParseFunctionData(line)
 	let l:data = s:ParseBasicFunctionData(l:text)
 	let l:data["parameters"] = []
 
-	let l:parameters = parparse#ParseParameters(a:line)
+	let l:functionData = parparse#ParseParameters(a:line)
+	let l:parameters = l:functionData["parameters"]
 
 	for l:param in l:parameters
 		call add(l:data["parameters"], s:ParseParameterData(l:param))
 	endfor
+
+	if (l:functionData["return"] != "")
+		let l:data["return"] = l:functionData["return"]
+	endif
 
 	return l:data
 endfunc
