@@ -293,14 +293,14 @@ endfunc
 " ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
 " 1:indent, 2:name
 func! pdv#ParseConstData(line)
-    :print line
 	let l:text = getline(a:line)
 
 	let l:data = {}
 	let l:matches = matchlist(l:text, s:regex["const"])
 
 	let l:data["indent"] = l:matches[1]
-	let l:data["name"] = l:matches[2]
+	let l:data["scope"] = l:matches[2]
+	let l:data["name"] = l:matches[3]
 
 	return l:data
 endfunc
