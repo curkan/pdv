@@ -293,6 +293,7 @@ endfunc
 " ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
 " 1:indent, 2:name
 func! pdv#ParseConstData(line)
+    :print line
 	let l:text = getline(a:line)
 
 	let l:data = {}
