@@ -298,9 +298,9 @@ func! pdv#ParseConstData(line)
 	let l:data = {}
 	let l:matches = matchlist(l:text, s:regex["const"])
 
-	let l:data["indent"] = l:matches[1]
-	let l:data["scope"] = l:matches[2]
-	let l:data["name"] = l:matches[3]
+	let l:data["scope"] = l:matches[1]
+	let l:data["indent"] = l:matches[2]
+	let l:data["name"] = l:matches[2]
 
 	return l:data
 endfunc
