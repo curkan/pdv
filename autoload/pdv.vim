@@ -62,7 +62,7 @@ let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$
 
 " ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
 " 1:indent, 2:name
-let s:regex["const"] = '^\(\s*\)const\s\+\(\S\+\)\s*='
+let s:regex["const"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)const\s\+\(\S\+\)\s*='
 
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
 let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
